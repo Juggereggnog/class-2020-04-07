@@ -20,21 +20,58 @@ Today's class will be based on [Chapter 12: "Multiple Regression"](https://david
 
 ### Scene 1
 
-**Prompt:** Recall the three common steps of exploring a new dataset: 1) looking at the raw data, 2) computing summary statistics, and 3) creating visualizations of the data. Start this process. Useful commands to use here: `glimpse()`,`sample_n`, and `skim` (from the skimr package). What observations are surprising? (Hints: Look at extremes, especially for the key variable you are interested in. Hint at the data for the schools you know.)  
+**Prompt:** Recall the three common steps of exploring a new dataset: 1) looking at the raw data, 2) computing summary statistics, and 3) creating visualizations of the data. Start this process. Useful commands to use here: `glimpse()`,`sample_n`, and `skim` (from the skimr package). What observations are surprising? (Hints: Look at extremes, especially for the key variable you are interested in. Hint at the data for the schools you know.)
+
+```{r}
+glimpse(x)
+
+skim(x)
+```
+
 
 ### Scene 2
 
 **Prompt:** What's the correlation between the average faculty salary in 2001 and the median income of students 10 years after entering? What's the correlation between the average SAT scores in 2001 and the median income of students 10 years after entering? Find these by doing two separate correlations first, and then making a correlation matrix (instructions in the book). 
+
+```{r}
+x %>% 
+  select(faculty, earnings, sat) %>% 
+  cor()
+```
 
 
 ### Scene 3
 
 **Prompt:** Visualize the relationships between the outcome variable (`earnings`) and the two key numerical explanatory variables (`faculty` and `sat`), one at a time. Create a ggplot for each showing the line of best fit.
 
+```{r}
+ggplot(x, aes(faculty, earnings)) +
+  geom_point(alpha = .25) +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggplot(x, aes(sat, earnings)) +
+  geom_point(alpha = .25) +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
 
 ### Scene 4
 
 **Prompt:** Now let's quantify these relationships between the two explanatory variables and the outcome variable. Fit a multiple regression model for `earnings` using `sat` and `faculty` as the explanatory variables. Write a bullet point interpreting each of the three values in the estimate column. Do not use any interaction terms in the regression (yet).
+
+```{r}
+
+# "+" means the two variables do NOT interact; if you want them to use "*"
+
+regression_model_sat_faculty <- lm(earnings ~ faculty + sat, data = x)
+
+regression_model_sat_faculty %>% 
+  tidy(conf.int = TRUE) %>% 
+  select(term, estimate, conf.low, conf.high)
+```
+
+* Holding other variables constant, an increase of 1 in faculty will result in a .38 increase in predicted student earnings.
+* 95% certain: the averaqe treatment effect will be between .335 and .436 (Bayesian).
 
 
 ### Scene 5
@@ -51,10 +88,25 @@ Today's class will be based on [Chapter 12: "Multiple Regression"](https://david
 
 **Prompt:** Recall the model we made in Scene 4. Use that model to make a prediction. Consider a school with average faculty salary of $50,000 and average SAT of 1400. What would the the median student's earnings be 10 years from now? Although there are fancier ways of doing this in R --- check out the `predict()` function --- you should use the simple approach of using the regression estimates and then plugging in the appropriate values. Then, what would happen if a change in financial aid were to drop the average SAT score to 1300? What would you forecast earnings to be in that case? Putting the two together: What is the causal effect of the drop in SAT? Do you believe that? That is, if you were the university president, would you believe that forecast?
 
+```{r}
+regression_model_sat_faculty <- lm(earnings ~ faculty + sat, data = x) %>% 
+  tidy(conf.int = TRUE)
+
+regression_model_sat_faculty
+  
+
+coeffs <- regression_model_sat_faculty
+```
+
 
 ### Scene 8
 
 **Prompt:** Now that we have our regression model using two numerical explanatory variables, let's find the fitted values and residuals for the model using `augment()`. What do the fitted values and residuals mean, in terms of where they appear in a fitted line graph? Take a look at the biggest residuals, both positive and negative. What causes them? What is the model missing? How might we improve the model?
+
+```{r}
+
+```
+
 
 
 
