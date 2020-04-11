@@ -1,1 +1,1 @@
-# class-2020-04-07
+# Student Earnings Based on Faculty Salary and Student SAT Score
